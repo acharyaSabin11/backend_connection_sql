@@ -1,6 +1,14 @@
 const http = require('http');   //includes node js http module
 const pg = require('pg');   //adding postgres library
 require('dotenv').config();
+const fs = require('fs');
+const htmlPath = __dirname + '/index.html'
+const cssPath = __dirname + '/style.css'
+const scriptPath = __dirname + '/script.js'
+
+const htmlContent = fs.readFileSync(htmlPath);
+const cssContent = fs.readFileSync(cssPath);
+const scriptContent = fs.readFileSync(scriptPath);
 
 const dbName = process.env.DB_NAME;
 const dbUser = process.env.DB_USERNAME;
@@ -12,9 +20,11 @@ console.log(connectionString);
 
 const client = new pg.Client(connectionString);
 client.connect(function (err) {
-  console.log(err);
   if (err) {
     return console.error('could not connect to postgres', err);
+  }
+  else {
+
   }
 });
 
@@ -30,25 +40,46 @@ const server = http.createServer((req, res) => {
       body += chunk;
     });
 
+
+
     req.on('end', () => {
       // At this point, the entire body has been received
       const receivedBody = JSON.parse(body);
-      console.log(receivedBody.name);
-
+      client.query(`INSERT INTO tbl_names(name) VALUES(\'${receivedBody.value}')`);
       // Do something with the body data...
 
       res.statusCode = 200;
       res.end('Body received successfully.');
     });
   }
-  // else if (req.method === 'GET') {
-  //   res.writeHead(200, {
-  //     'Content-Type': 'text/html',
-  //     'Content-Length': html.length,
-  //     'Expires': new Date().toUTCString()
-  //   });
-  //   res.end(html);
-  // }
+  else if (req.method === 'GET') {
+    if (req.url === '/') {
+      res.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Content-Length': htmlContent.length,
+        'Expires': new Date().toUTCString()
+      });
+      res.write(htmlContent);
+    }
+    else if (req.url === '/style.css') {
+      res.writeHead(200, {
+        'Content-Type': 'text/css',
+        'Content-Length': cssContent.length,
+        'Expires': new Date().toUTCString()
+      });
+      res.write(cssContent);
+    }
+    else if (req.url === '/script.js') {
+      res.writeHead(200, {
+        'Content-Type': 'text/script',
+        'Content-Length': scriptContent.length,
+        'Expires': new Date().toUTCString()
+      });
+      res.write(scriptContent);
+    }
+    res.end();
+
+  }
 }); //creates a new http server and returns it
 
 server.listen(port, hostname, () => {

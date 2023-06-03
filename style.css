@@ -41,6 +41,10 @@ main{
     text-align: center;
 }
 
+#textField:focus{
+    outline: none;
+}
+
 #submitButton:hover{
     background-color: rgba(187, 1, 243, 0.6);
 }
