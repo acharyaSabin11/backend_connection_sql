@@ -28,7 +28,7 @@ client.connect(function (err) {
   }
 });
 
-const hostname = '127.0.0.1';
+const hostname = '0.0.0.0';
 const port = process.env.PORT;
 
 const server = http.createServer((req, res) => {
