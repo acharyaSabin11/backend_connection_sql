@@ -10,15 +10,7 @@ const htmlContent = fs.readFileSync(htmlPath);
 const cssContent = fs.readFileSync(cssPath);
 const scriptContent = fs.readFileSync(scriptPath);
 
-const dbName = process.env.DB_NAME;
-const dbUser = process.env.DB_USERNAME;
-const dbHost = process.env.DB_HOST;
-const dbPassword = process.env.DB_PASSWORD;
-const connectionString = `postgres://${dbUser}:${dbPassword}@${dbHost}/${dbName}`;
-
-console.log(connectionString);
-
-const client = new pg.Client(connectionString);
+const client = new pg.Client(process.env.DB_URL);
 client.connect(function (err) {
   if (err) {
     return console.error('could not connect to postgres', err);
